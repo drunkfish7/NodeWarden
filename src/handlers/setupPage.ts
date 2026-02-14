@@ -42,7 +42,7 @@ function renderRegisterPageHTML(jwtState: JwtSecretState | null): string {
       padding: 40px 24px;
     }
 
-    .shell { width: min(980px, 100%); }
+    .shell { width: min(900px, 100%); }
 
     .panel {
       padding: 40px;
@@ -426,21 +426,20 @@ function renderRegisterPageHTML(jwtState: JwtSecretState | null): string {
 
       <section id="step2" class="step">
         <h2 id="t_s2_title">JWT secret check</h2>
-        <p class="lead" id="t_s2_desc"></p>
 
-        <div class="grid" style="margin-top:14px;">
+        <div style="margin-top:14px;display:flex;flex-direction:column;gap:14px;">
           <div class="kv">
             <h3 id="t_s2_fix_title">Fix steps</h3>
             <div id="t_s2_fix_text"></div>
-          </div>
-          <div class="kv">
+
+            <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
             <h3 id="t_s2_gen_title">Random JWT_SECRET</h3>
-            <p id="t_s2_gen_desc"></p>
             <div class="server" id="secret"></div>
             <div style="height:10px"></div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
               <button class="btn primary" type="button" id="refreshSecretBtn" onclick="refreshSecret()">Refresh</button>
               <button class="btn" type="button" id="copySecretBtn" onclick="copySecret()">Copy</button>
+            </div>
             </div>
           </div>
         </div>
@@ -606,7 +605,7 @@ function renderRegisterPageHTML(jwtState: JwtSecretState | null): string {
         s1CompatOther: '其他：未测试',
 
         s2Title: '环境检测：JWT_SECRET',
-        s2DescGood: 'JWT_SECRET 检测通过。若你当前不是使用高强度随机密钥，建议改用右侧生成器生成后再保存。',
+        s2DescGood: 'JWT_SECRET 检测通过。',
         s2DescMissing: '检测到 JWT_SECRET 未配置，先添加后再继续。',
         s2DescDefault: '检测到 JWT_SECRET 使用默认值，先更换后再继续。',
         s2DescShort: '检测到 JWT_SECRET 长度小于 32，先更换后再继续。',
@@ -618,8 +617,8 @@ function renderRegisterPageHTML(jwtState: JwtSecretState | null): string {
         s2FixStep2Replace: '打开 设置 → 变量和机密，找到 JWT_SECRET 并编辑为新值。',
         s2FixStep3: '保存并等待服务重新部署完成。',
         s2FixStep4: '设置完后回到本页，刷新页面继续。',
+        s2FixStep5: '如需新密钥，可在本卡片下方生成并复制后再粘贴到 JWT_SECRET。',
         s2GenTitle: '随机密钥生成器',
-        s2GenDesc: '建议至少 32 位，推荐 64 位。复制后粘贴到 JWT_SECRET。',
         refresh: '刷新',
         copy: '复制',
         copied: '已复制',
@@ -695,7 +694,7 @@ function renderRegisterPageHTML(jwtState: JwtSecretState | null): string {
         s1CompatOther: 'Others: not tested',
 
         s2Title: 'Environment check: JWT_SECRET',
-        s2DescGood: 'JWT_SECRET check passed. If you are not using a strong random secret yet, we still recommend replacing it with one from the generator on the right.',
+        s2DescGood: 'JWT_SECRET check passed.',
         s2DescMissing: 'JWT_SECRET is missing. Add it before continuing.',
         s2DescDefault: 'JWT_SECRET is default/sample. Replace it before continuing.',
         s2DescShort: 'JWT_SECRET is shorter than 32 chars. Replace it before continuing.',
@@ -707,8 +706,8 @@ function renderRegisterPageHTML(jwtState: JwtSecretState | null): string {
         s2FixStep2Replace: 'Go to Settings → Variables and Secrets, edit JWT_SECRET with a new value.',
         s2FixStep3: 'Save and wait for redeploy to complete.',
         s2FixStep4: 'After setting it, come back and refresh this page to continue.',
+        s2FixStep5: 'If needed, generate a new secret in the section below, then copy and paste it into JWT_SECRET.',
         s2GenTitle: 'Random secret generator',
-        s2GenDesc: 'Use 32+ chars (64 recommended). Copy and paste into JWT_SECRET.',
         refresh: 'Refresh',
         copy: 'Copy',
         copied: 'Copied',
@@ -778,19 +777,18 @@ function renderRegisterPageHTML(jwtState: JwtSecretState | null): string {
       if (!el) return;
       if (!JWT_STATE) {
         el.innerHTML = isChinese()
-          ? '<div style="margin-bottom:8px;font-weight:700;color:#1d2939;">当前状态：已通过</div><ol><li>你可以继续下一步，不影响使用。</li><li>如果当前密钥不是强随机值，建议复制右侧生成器的 64 位密钥。</li><li>到 Cloudflare 控制台 → Workers 和 Pages → 你的服务 → 设置 → 变量和机密，更新 JWT_SECRET。</li><li>保存并等待重新部署完成，然后刷新本页确认。</li></ol>'
-          : '<div style="margin-bottom:8px;font-weight:700;color:#1d2939;">Current status: passed</div><ol><li>You can continue directly.</li><li>If your current secret is not a strong random one, copy a 64-char secret from the generator.</li><li>Go to Cloudflare Dashboard → Workers & Pages → your service → Settings → Variables and Secrets, then update JWT_SECRET.</li><li>Save, wait for redeploy, and refresh this page to confirm.</li></ol>';
+          ? '<ol><li>你可以继续下一步，不影响使用。</li><li>如果当前密钥不是强随机值，建议复制下方生成器的 64 位密钥。</li><li>到 Cloudflare 控制台 → Workers 和 Pages → 你的服务 → 设置 → 变量和机密，更新 JWT_SECRET。</li><li>保存并等待重新部署完成，然后刷新本页确认。</li></ol>'
+          : '<ol><li>You can continue directly.</li><li>If your current secret is not a strong random one, copy a 64-char secret from the generator below.</li><li>Go to Cloudflare Dashboard → Workers & Pages → your service → Settings → Variables and Secrets, then update JWT_SECRET.</li><li>Save, wait for redeploy, and refresh this page to confirm.</li></ol>';
         return;
       }
       const isAdd = JWT_STATE === 'missing';
-      const title = isAdd ? t('s2FixAddTitle') : t('s2FixReplaceTitle');
       const step2 = isAdd ? t('s2FixStep2Add') : t('s2FixStep2Replace');
-      el.innerHTML = '<div style="margin-bottom:8px;font-weight:700;color:#1d2939;">' + title + '</div>'
-        + '<ol>'
+      el.innerHTML = '<ol>'
         + '<li>' + t('s2FixStep1') + '</li>'
         + '<li>' + step2 + '</li>'
         + '<li>' + t('s2FixStep3') + '</li>'
         + '<li>' + t('s2FixStep4') + '</li>'
+        + '<li>' + t('s2FixStep5') + '</li>'
         + '</ol>';
     }
 
@@ -817,7 +815,6 @@ function renderRegisterPageHTML(jwtState: JwtSecretState | null): string {
       setText('t_s2_fix_title', t('s2FixTitle'));
       renderJwtFixSteps();
       setText('t_s2_gen_title', t('s2GenTitle'));
-      setText('t_s2_gen_desc', t('s2GenDesc'));
       setText('refreshSecretBtn', t('refresh'));
       setText('copySecretBtn', t('copy'));
 
@@ -861,12 +858,12 @@ function renderRegisterPageHTML(jwtState: JwtSecretState | null): string {
       setText('nextBtn', t('next'));
       setText('langToggle', isChinese() ? 'EN' : '中文');
 
-      const desc = document.getElementById('t_s2_desc');
-      if (desc) {
-        if (!JWT_STATE) desc.textContent = t('s2DescGood');
-        else if (JWT_STATE === 'missing') desc.textContent = t('s2DescMissing');
-        else if (JWT_STATE === 'default') desc.textContent = t('s2DescDefault');
-        else desc.textContent = t('s2DescShort');
+      const title = document.getElementById('t_s2_title');
+      if (title) {
+        if (!JWT_STATE) title.textContent = t('s2DescGood');
+        else if (JWT_STATE === 'missing') title.textContent = t('s2DescMissing');
+        else if (JWT_STATE === 'default') title.textContent = t('s2DescDefault');
+        else title.textContent = t('s2DescShort');
       }
     }
 
